@@ -46,9 +46,7 @@ public class Dentista implements Serializable{
     @Column(name = "nm_dentista", columnDefinition = "varchar(100)")
     private String nome;
     
-    @NotNull(message = "O campo registro não pode ser núlo")
-    @NotEmpty(message = "O campo registro não pode ser vázio")
-    @NotBlank(message = "O campo registro não pode estár em branco")
+   
     @Column(name = "nr_registro", unique = true)
     private int registro;
 

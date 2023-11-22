@@ -1,57 +1,68 @@
 package com.lucfritzke.bludent.domain;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Paciente {
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.br.CPF;
 
-    private Long cd_paciente;
-    private String nm_paciente;
-    private LocalDate dt_nascimento;
-    private int nr_cpf;
-    private String nr_telefone;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-    public Paciente() {
-        // Construtor vazio necessário para JPA
-    }
 
-    public Paciente(String nome, LocalDate dataNascimento, int cpf, String telefone) {
-        this.nm_paciente = nome;
-        this.dt_nascimento = dataNascimento;
-        this.nr_cpf = cpf;
-        this.nr_telefone = telefone;
-    }
+@EqualsAndHashCode
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Schema(name = "paciente", description = "Entidade Paciente")
+@Entity(name ="paciente")
+public class Paciente implements Serializable{
 
+    @Serial
+    private final static long serialVersionUID = 1L;
 
-    public Long getCd_paciente() {
-        return cd_paciente;
-    }
-    public void setCd_paciente(Long cd_paciente) {
-        this.cd_paciente = cd_paciente;
-    }
-    public String getNm_paciente() {
-        return nm_paciente;
-    }
-    public void setNm_paciente(String nm_paciente) {
-        this.nm_paciente = nm_paciente;
-    }
-    public LocalDate getDt_nascimento() {
-        return dt_nascimento;
-    }
-    public void setDt_nascimento(LocalDate dt_nascimento) {
-        this.dt_nascimento = dt_nascimento;
-    }
-    public int getNr_cpf() {
-        return nr_cpf;
-    }
-    public void setNr_cpf(int nr_cpf) {
-        this.nr_cpf = nr_cpf;
-    }
-    public String getNr_telefone() {
-        return nr_telefone;
-    }
-    public void setNr_telefone(String nr_telefone) {
-        this.nr_telefone = nr_telefone;
-    }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cd_paciente")
+    private Long id;
+
+    @Length(min = 4, max = 100, message = "O campo nome deve conter entre 4 a 100 caracteres")
+    @NotNull(message = "O campo nome não pode ser núlo")
+    @NotEmpty(message = "O campo nome não pode ser vázio")
+    @NotBlank(message = "O campo nome não pode estár em branco")
+    @Column(name = "nm_paciente", columnDefinition = "varchar(100)")
+    private String nome;
+
+    @Past(message = "A data de nascimento deve estar no passado")
+    @Column(name = "dt_nascimento")
+    private LocalDate dataNascimento;
+
+    @CPF(message = "CPF inválido")
+    @Column(name = "nr_cpf", columnDefinition = "varchar(14)") 
+    private String cpf;
+    
+    @NotBlank(message = "O número de telefone não pode estar em branco")
+    @Size(min = 8, max = 15, message = "O número de telefone deve ter entre 8 e 15 caracteres")
+    @Pattern(regexp = "\\d+", message = "O número de telefone deve conter apenas dígitos")
+    @Column(name = "nr_telefone", columnDefinition = "varchar(15)")
+    private String telefone;
 
     
 }
