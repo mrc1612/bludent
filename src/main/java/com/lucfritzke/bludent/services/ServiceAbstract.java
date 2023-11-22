@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.lucfritzke.bludent.domain.Dentista;
 import com.lucfritzke.bludent.exceptions.NotFoundException;
 
 public abstract class ServiceAbstract<T> {
@@ -34,10 +33,16 @@ public abstract class ServiceAbstract<T> {
 
     }
 
+    public T findByIdDelete(Long id) {
+
+        return repository().findById(id).orElseThrow(() ->  new NotFoundException("{ \"status\" : \"ERRO\", \"mensagem\" : \"Código de Dentista não existe\"}"));
+
+    }
+
     public void delete(Long id) {
        repository().delete(
                 repository().findById(id)
-                        .orElseThrow(() -> new NotFoundException("Entidade não encontrada"))
+                        .orElseThrow(() -> new NotFoundException("{ \"status\" : \"ERRO\", \"mensagem\" : \"Código de Dentista não existe\"}"))
         );
     }
 }

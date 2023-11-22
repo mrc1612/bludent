@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.hibernate.validator.constraints.br.CPF;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,6 +36,7 @@ import lombok.Setter;
 @Entity(name ="paciente")
 public class Paciente implements Serializable{
 
+
     @Serial
     private final static long serialVersionUID = 1L;
 
@@ -55,7 +57,7 @@ public class Paciente implements Serializable{
     private LocalDate dataNascimento;
 
     @CPF(message = "CPF inválido")
-    @Column(name = "nr_cpf", columnDefinition = "varchar(14)") 
+    @Column(unique = true, name = "nr_cpf", columnDefinition = "varchar(14)") 
     private String cpf;
     
     @NotBlank(message = "O número de telefone não pode estar em branco")

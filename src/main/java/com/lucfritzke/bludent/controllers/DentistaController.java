@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.lucfritzke.bludent.domain.Dentista;
 import com.lucfritzke.bludent.exceptions.NotFoundException;
@@ -58,7 +55,6 @@ public class DentistaController {
         BindingResult result
     ){
         // Lógica para lidar com os resultados de validação e processamento dos dados
-        Optional<Dentista> o;
         if (result.hasErrors()) {
             // Se houver erros de validação, você pode acessar essas mensagens aqui
             List<ObjectError> errors = result.getAllErrors();
@@ -121,7 +117,6 @@ public class DentistaController {
     public ResponseEntity<Dentista> getDentista(@PathVariable Long id) {
         Dentista d = dentistaService.findById(id);
         return ResponseEntity.ok().body(d);
-
     }
 
 }

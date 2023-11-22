@@ -1,8 +1,10 @@
 package com.lucfritzke.bludent.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import com.lucfritzke.bludent.domain.Paciente;
 import com.lucfritzke.bludent.repositories.PacienteRepository;
@@ -17,5 +19,15 @@ public class PacienteService extends ServiceAbstract<Paciente>{
     public JpaRepository<Paciente, Long> repository() {
         return this.repository;
     }
+
+    @Override
+    public Paciente create(Paciente entity) {
+        if (repository.existsByCpf(entity.getCpf())) {
+            throw new DataIntegrityViolationException("{\"cpf\" : \"CPF já cadastrado\"}");
+        }
+        return super.create(entity);
+    }
+
+    
     
 }
