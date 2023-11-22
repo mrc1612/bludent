@@ -1,27 +1,37 @@
 package com.lucfritzke.bludent.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import com.lucfritzke.bludent.domain.Dentista;
+import com.lucfritzke.bludent.domain.Paciente;
 import com.lucfritzke.bludent.exceptions.NotFoundException;
 import com.lucfritzke.bludent.repositories.DentistaRepository;
 import com.lucfritzke.bludent.services.DentistaService;
+import com.lucfritzke.bludent.services.PacienteService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,89 +44,101 @@ import jakarta.validation.Valid;
 public class DentistaController {
 
     @Autowired
-    private DentistaRepository dentistaRepository;
-
-    @Autowired
-    private DentistaService dentistaService;
-
+    private DentistaService service;
+    
     @Operation(
-        summary = "Inserir novo registro",
+        summary = "Inserir novo Dentista",
         responses = {
             @ApiResponse(responseCode = "200", description = "Quando o registro for criado",
             content = @Content(mediaType = "application/json", 
-            schema = @Schema(example = "{\"nome\": \"Marcos da Silva\", \"registro\": \"123456\" }"))),
-            @ApiResponse(responseCode = "400", description = "Quando o registro for nulo")
-        }
-        
+            schema = @Schema(example = "{\"nome\":\"Julio Farias\",\"registro\":789,\"email\":\"julia@hotmail.com\"}"))),
+            @ApiResponse(responseCode = "400", description = "Quando o registro for nulo ou houver formatação incorreta de dados"),
+        }   
     )
-    @PostMapping
-    public ResponseEntity getDentista(
-        @Valid @RequestBody Dentista entity, 
-        BindingResult result
-    ){
-        // Lógica para lidar com os resultados de validação e processamento dos dados
-        if (result.hasErrors()) {
-            // Se houver erros de validação, você pode acessar essas mensagens aqui
-            List<ObjectError> errors = result.getAllErrors();
-            // Faça algo com as mensagens de erro, como retornar uma resposta com detalhes dos erros
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
-        }
-    
-        try {
-            // Código para salvar a entidade no banco de dados ou realizar outras operações
-            return ResponseEntity.ok().body(entity);
-        } catch (Exception e) {
-            // Lidar com outras exceções
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+    @PostMapping("/cadastrar")
+    public ResponseEntity<Dentista> create(@Valid @RequestBody Dentista entity){
+
+        return ResponseEntity.ok().body(service.create(entity));
+        
     }
 
-    @GetMapping("/nome/{nome}")
-    public ResponseEntity<List<Dentista>> getDEntityByNome(@PathVariable String nome) {
-        List<Dentista> liDen = dentistaRepository.findByNomeContaining(nome);
-        if (liDen.isEmpty()) {
-            throw new NotFoundException("dentista nao localizado");
-        } else {
-            return ResponseEntity.ok().body(liDen);
-        }
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Dentista> updateDentista(@PathVariable Long id, @RequestBody Dentista updatedDentista) {
-        Optional<Dentista> existingDentistaOptional = dentistaRepository.findById(id);
-
-        if (existingDentistaOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Dentista existingDentista = existingDentistaOptional.get();
-
-        existingDentista.setNome(updatedDentista.getNome());
-        existingDentista.setRegistro(updatedDentista.getRegistro());
-        existingDentista.setEmail(updatedDentista.getEmail());
-
-        Dentista updated = dentistaRepository.save(existingDentista);
-
-        return ResponseEntity.ok().body(updated);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteDentista(@PathVariable Long id) {
-        Optional<Dentista> dentista = dentistaRepository.findById(id);
-        if (dentista.isPresent()) {
-            dentistaRepository.deleteById(id);
-            String json = "{ \"status\" : \"OK\", \"mensagem\" : \"OK\"}";
-            return ResponseEntity.ok().body(json);
-        } else {
-            String errorJson = "{ \"status\" : \"ERRO\", \"mensagem\" : \"Código de Dentista não existe\"}";
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorJson);
-        }
-    }
-
+    @Operation(
+        summary = "Obter dados por ID",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Quando o registro for encontrado"),
+            @ApiResponse(responseCode = "404", description = "Quando o registro não for encontrado"),
+        }   
+    )
     @GetMapping("/{id}")
-    public ResponseEntity<Dentista> getDentista(@PathVariable Long id) {
-        Dentista d = dentistaService.findById(id);
-        return ResponseEntity.ok().body(d);
+    public ResponseEntity<Dentista> getDentista(
+            @Parameter(description = "ID do registro a ser obtido", required = true)
+            @PathVariable Long id) {
+        Dentista p = service.findById(id);
+        return ResponseEntity.ok().body(p);
+    }
+
+
+    @Operation(summary = "Deletar um registro existente", responses = {
+        @ApiResponse(responseCode = "200", description = "Quando o registro for deletado"),
+        @ApiResponse(responseCode = "404", description = "Quando o registro não for encontrado") })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteDentista(
+            @Parameter(description = "ID do registro a ser deletado", required = true)
+            @PathVariable Long id) {
+        service.findByIdDelete(id);
+        service.delete(id);
+        String json = "{ \"status\" : \"OK\", \"mensagem\" : \"OK\"}";
+        return ResponseEntity.ok().body(json);
+    }
+
+     @Operation(
+        summary = "Alterar dados existentes por ID",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Quando o registro for encontrado"),
+            @ApiResponse(responseCode = "404", description = "Quando o registro não for encontrado"),
+        }   
+    )
+    @PutMapping("/{id}")
+    public ResponseEntity<Dentista> atualizarPaciente(@PathVariable Long id, @RequestBody Dentista entity) {
+        Dentista dentista = service.findById(id);
+        if(entity.getNome() != null){
+             dentista.setNome(entity.getNome());
+        }
+        if(entity.getRegistro() != 0){
+            dentista.setRegistro(entity.getRegistro());
+        }
+        if(entity.getEmail() != null){
+            dentista.setEmail(entity.getEmail());
+        }
+        service.update(dentista, id);
+        return ResponseEntity.ok().body(dentista);
+    }
+
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        BindingResult result = ex.getBindingResult();
+        Map<String, String> errors = new HashMap<>();
+
+        for (FieldError error : result.getFieldErrors()) {
+            errors.put(error.getField(), error.getDefaultMessage());
+        }
+        return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<?> dataIntegrityViolationException(DataIntegrityViolationException de){
+
+        return ResponseEntity.status(409).body(de.getMessage());
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<?> notFoundExpeption(NotFoundException ne){
+
+        return ResponseEntity.status(404).body(ne.getMessage());
     }
 
 }

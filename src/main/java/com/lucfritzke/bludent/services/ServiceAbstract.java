@@ -35,14 +35,14 @@ public abstract class ServiceAbstract<T> {
 
     public T findByIdDelete(Long id) {
 
-        return repository().findById(id).orElseThrow(() ->  new NotFoundException("{ \"status\" : \"ERRO\", \"mensagem\" : \"Código de Dentista não existe\"}"));
+        return repository().findById(id).orElseThrow(() ->  new NotFoundException("{ \"status\" : \"ERRO\", \"mensagem\" : \"Entidade não existe\"}"));
 
     }
 
     public void delete(Long id) {
        repository().delete(
                 repository().findById(id)
-                        .orElseThrow(() -> new NotFoundException("{ \"status\" : \"ERRO\", \"mensagem\" : \"Código de Dentista não existe\"}"))
+                        .orElseThrow(() -> new NotFoundException("{ \"status\" : \"ERRO\", \"mensagem\" : \"Entidade não existe\"}"))
         );
     }
 }

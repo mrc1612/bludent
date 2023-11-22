@@ -1,10 +1,7 @@
 package com.lucfritzke.bludent.controllers;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -23,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.lucfritzke.bludent.domain.Dentista;
 import com.lucfritzke.bludent.domain.Paciente;
 import com.lucfritzke.bludent.exceptions.NotFoundException;
 import com.lucfritzke.bludent.services.PacienteService;
@@ -79,7 +74,8 @@ public class PacienteController {
 
 
     @Operation(summary = "Deletar um registro existente", responses = {
-        @ApiResponse(responseCode = "200", description = "Quando o registro for deletado"), })
+        @ApiResponse(responseCode = "200", description = "Quando o registro for deletado"),
+        @ApiResponse(responseCode = "404", description = "Quando o registro não for encontrado")})
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteDentista(
             @Parameter(description = "ID do registro a ser deletado", required = true)
@@ -90,9 +86,13 @@ public class PacienteController {
         return ResponseEntity.ok().body(json);
     }
 
-
-    
-    
+    @Operation(
+        summary = "Alterar dados existentes por ID",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Quando o registro for encontrado"),
+            @ApiResponse(responseCode = "404", description = "Quando o registro não for encontrado"),
+        }   
+    )
     @PutMapping("/{id}")
     public ResponseEntity<Paciente> atualizarPaciente(@PathVariable Long id, @RequestBody Paciente entity) {
         Paciente paciente = service.findById(id);
