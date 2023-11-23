@@ -3,13 +3,13 @@ package com.lucfritzke.bludent.domain;
 import java.io.Serializable;
 
 import org.hibernate.validator.constraints.Length;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -40,6 +40,7 @@ public class Procedimento implements Serializable {
     @Column(name = "ds_procedimento", columnDefinition = "varchar(100)")
     private String descricao;
 
-
+   // @OneToMany(mappedBy = "procedimento")
+   // Set<ProcedimentoDentista>  procedimentoDentista;
     
 }

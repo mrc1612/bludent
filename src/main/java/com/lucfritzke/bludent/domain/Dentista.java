@@ -54,5 +54,7 @@ public class Dentista implements Serializable{
     @Column(name = "ds_email")
     private String email;
     
+   // @OneToMany(mappedBy = "dentista")
+   // Set<ProcedimentoDentista>  procedimentoDentista;
 
 }

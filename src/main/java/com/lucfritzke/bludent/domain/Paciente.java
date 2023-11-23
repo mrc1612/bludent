@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.UniqueElements;
 import org.hibernate.validator.constraints.br.CPF;
 
 import io.swagger.v3.oas.annotations.media.Schema;
