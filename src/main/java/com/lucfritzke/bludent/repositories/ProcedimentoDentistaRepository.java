@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.lucfritzke.bludent.domain.Dentista;
 import com.lucfritzke.bludent.domain.ProcedimentoDentista;
 import com.lucfritzke.bludent.domain.ProcedimentoDentistaId;
 
@@ -21,4 +22,8 @@ public interface ProcedimentoDentistaRepository extends JpaRepository<Procedimen
             "where p.cd_procedimento = pd.cd_procedimento " +
             "and pd.cd_dentista = :dentistaId", nativeQuery = true)
     List<Object[]> findProcedimentoByDentista(@Param("dentistaId") Long id);
+
+    @Query(value = " ", nativeQuery = true)
+    
+    List<ProcedimentoDentista> findByDentista(Dentista dentista);
 }

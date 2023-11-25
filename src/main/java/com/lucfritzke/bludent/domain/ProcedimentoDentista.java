@@ -35,7 +35,8 @@ public class ProcedimentoDentista {
     @JoinColumn(name = "cd_procedimento")
     private Procedimento procedimento;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "vl_procedimento")
+
     private double valor;
     
 

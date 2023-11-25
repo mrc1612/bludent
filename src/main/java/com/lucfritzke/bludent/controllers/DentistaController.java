@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import com.lucfritzke.bludent.domain.Dentista;
+import com.lucfritzke.bludent.dto.ErroDTO;
 import com.lucfritzke.bludent.exceptions.NotFoundException;
 import com.lucfritzke.bludent.services.DentistaService;
 
@@ -122,9 +123,9 @@ public class DentistaController {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity<?> dataIntegrityViolationException(DataIntegrityViolationException de){
-
-        return ResponseEntity.status(409).body(de.getMessage());
+    public ResponseEntity<?> dataIntegrityViolationException(DataIntegrityViolationException de) {
+        ErroDTO e = new ErroDTO(409, "Conflict", de.getMessage());
+        return ResponseEntity.status(409).body(e);
     }
 
     @ExceptionHandler(NotFoundException.class)

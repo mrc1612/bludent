@@ -1,6 +1,7 @@
 package com.lucfritzke.bludent.controllers;
 
 import com.lucfritzke.bludent.domain.Procedimento;
+import com.lucfritzke.bludent.dto.ErroDTO;
 import com.lucfritzke.bludent.services.ProcedimentoService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -106,6 +107,7 @@ public class ProcedimentoController {
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<?> notFoundExpeption(NotFoundException ne){
-        return ResponseEntity.status(404).body(ne.getMessage());
+        ErroDTO e = new ErroDTO(404, "Not found", ne.getMessage());
+        return ResponseEntity.status(404).body(e);
     }
 }

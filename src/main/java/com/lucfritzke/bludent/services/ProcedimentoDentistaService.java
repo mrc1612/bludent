@@ -13,6 +13,7 @@ import com.lucfritzke.bludent.domain.Procedimento;
 import com.lucfritzke.bludent.domain.ProcedimentoDentista;
 import com.lucfritzke.bludent.domain.ProcedimentoDentistaId;
 import com.lucfritzke.bludent.dto.ProcedimentoPorDentistaDTO;
+import com.lucfritzke.bludent.exceptions.NotFoundException;
 import com.lucfritzke.bludent.repositories.DentistaRepository;
 import com.lucfritzke.bludent.repositories.ProcedimentoDentistaRepository;
 
@@ -72,4 +73,25 @@ public class ProcedimentoDentistaService {
         
         return pDTo;
     }
+
+    public ProcedimentoDentista findById(ProcedimentoDentistaId id) {
+
+        return repository().findById(id).orElseThrow(() ->  new NotFoundException("Entidade não encontrada"));
+
+    }
+
+    public ProcedimentoDentista update(ProcedimentoDentista entity) {
+        return repository.save(entity);
+    }
+
+    public List<ProcedimentoDentista> findDentistaById(Dentista d) {
+        return repository.findByDentista(d);
+    }
+
+    public void delete(ProcedimentoDentistaId id) {
+        repository().delete(
+                 repository().findById(id)
+                         .orElseThrow(() -> new NotFoundException("{ \"status\" : \"ERRO\", \"mensagem\" : \"Entidade não existe\"}"))
+         );
+     }
 }
