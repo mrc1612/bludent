@@ -76,7 +76,7 @@ public class ProcedimentoDentistaService {
 
     public ProcedimentoDentista findById(ProcedimentoDentistaId id) {
 
-        return repository().findById(id).orElseThrow(() ->  new NotFoundException("Entidade não encontrada"));
+        return repository().findById(id).orElseThrow(() ->  new NotFoundException("Dentista ou procedimento invalido"));
 
     }
 
@@ -94,4 +94,6 @@ public class ProcedimentoDentistaService {
                          .orElseThrow(() -> new NotFoundException("{ \"status\" : \"ERRO\", \"mensagem\" : \"Entidade não existe\"}"))
          );
      }
+
+
 }

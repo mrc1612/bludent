@@ -64,7 +64,7 @@ public class ProcedimentoController {
     @Operation(summary = "Deletar um registro existente", responses = {
         @ApiResponse(responseCode = "200", description = "Quando o registro for deletado"), })
         @ApiResponse(responseCode = "404", description = "Quando o registro não for encontrado")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteProcedimento(@PathVariable Long id) {
         service.delete(id);
         String json = "{ \"status\" : \"OK\", \"mensagem\" : \"OK\"}";

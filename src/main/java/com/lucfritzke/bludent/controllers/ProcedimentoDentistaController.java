@@ -55,7 +55,7 @@ public class ProcedimentoDentistaController {
     private ProcedimentoDentistaRepository repository;
 
     @Operation(summary = "Atribuir a um Dentista um novo procedimento")
-    @PostMapping("/cadastrar")
+    @PostMapping("/inserir")
     public ResponseEntity<ProcedimentoDentista> createProcedimento(
             @Validated @RequestBody ProcedimentoDentistaDTO pDTO) {
 

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.lucfritzke.bludent.domain.Dentista;
 import com.lucfritzke.bludent.domain.ProcedimentoDentista;
+import com.lucfritzke.bludent.exceptions.NotFoundException;
 import com.lucfritzke.bludent.repositories.DentistaRepository;
 
 
@@ -36,6 +37,13 @@ public class DentistaService extends ServiceAbstract<Dentista> {
         }
         super.delete(id);
     }
+
+    @Override
+    public Dentista findById(Long id) {
+            return repository().findById(id).orElseThrow(() ->  new NotFoundException("Dentista não encontrado"));
+    }
+
+    
 
     
     

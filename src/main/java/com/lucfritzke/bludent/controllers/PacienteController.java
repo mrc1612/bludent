@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import com.lucfritzke.bludent.domain.Paciente;
+import com.lucfritzke.bludent.dto.ErroDTO;
 import com.lucfritzke.bludent.exceptions.NotFoundException;
 import com.lucfritzke.bludent.services.PacienteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -121,14 +122,14 @@ public class PacienteController {
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<?> dataIntegrityViolationException(DataIntegrityViolationException de){
-
-        return ResponseEntity.status(409).body(de.getMessage());
+        ErroDTO e = new ErroDTO(409, "CONFLICT", de.getMessage());
+        return ResponseEntity.status(409).body(e);
     }
 
     @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<?> notFoundExpeption(NotFoundException ne){
-
-        return ResponseEntity.status(404).body(ne.getMessage());
+        ErroDTO e = new ErroDTO(404, "NOT_FOUND", ne.getMessage());
+        return ResponseEntity.status(404).body(e);
     }
 }
