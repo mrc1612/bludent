@@ -35,6 +35,8 @@ import com.lucfritzke.bludent.dto.ErroDTO;
 import com.lucfritzke.bludent.exceptions.NotFoundException;
 import com.lucfritzke.bludent.services.ConsultaService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+@Tag(name = "Consulta", description = "Responsavel por gerenciar os dados das consultas")
 @RestController
 @RequestMapping("/consulta")
 public class ConsultaController {
