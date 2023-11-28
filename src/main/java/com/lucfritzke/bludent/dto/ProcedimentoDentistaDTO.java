@@ -8,7 +8,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ProcedimentoDentistaDTO implements Serializable{
-    private Long procedimento;
+    
     private Long dentista;
+    private Long procedimento;
     private double valor;
 }

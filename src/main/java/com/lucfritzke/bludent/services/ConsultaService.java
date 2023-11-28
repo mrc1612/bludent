@@ -1,5 +1,9 @@
 package com.lucfritzke.bludent.services;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +15,7 @@ import com.lucfritzke.bludent.domain.Consulta;
 import com.lucfritzke.bludent.domain.ProcedimentoDentista;
 import com.lucfritzke.bludent.domain.ProcedimentoDentistaId;
 import com.lucfritzke.bludent.dto.ConsultaDTO;
+import com.lucfritzke.bludent.dto.ConsultaListaDTO;
 import com.lucfritzke.bludent.dto.ConsultaPutDTO;
 import com.lucfritzke.bludent.dto.ErroDTO;
 import com.lucfritzke.bludent.exceptions.NotFoundException;
@@ -69,6 +74,26 @@ public class ConsultaService {
             return ResponseEntity.status(404).body(new ErroDTO(404, "ERRO", "Id da consulta não localizado"));
         }
 
+    }
+
+    public Consulta getById(Long id) {
+        return consultaRepository.findById(id).orElseThrow(()-> new NotFoundException("Consulta não existe"));
+    }
+
+    public List<ConsultaListaDTO> getConsultaParam(LocalDate data, long idDentista) {
+        List<Object[]> liOb = consultaRepository.getConsultaParam(data, idDentista);
+        List<ConsultaListaDTO> lista = new ArrayList<>();
+        for (Object[] ob : liOb) {
+            ConsultaListaDTO c = new ConsultaListaDTO( (Long)ob[0], 
+            ((java.sql.Date) ob[1]).toLocalDate(), 
+            ((java.sql.Time) ob[2]).toLocalTime(), 
+            (String) ob[3], 
+            (String) ob[4], 
+            (String) ob[5], 
+            (Double) ob[6]);
+            lista.add(c);
+        }
+        return lista;
     }
 
 }

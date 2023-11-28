@@ -49,7 +49,7 @@ public class DentistaController {
             @ApiResponse(responseCode = "400", description = "Quando o registro for nulo ou houver formatação incorreta de dados"),
         }   
     )
-    @PostMapping("/cadastrar")
+    @PostMapping("/inserir")
     public ResponseEntity<Dentista> create(@Valid @RequestBody Dentista entity){
 
         return ResponseEntity.ok().body(service.create(entity));
@@ -75,7 +75,7 @@ public class DentistaController {
     @Operation(summary = "Deletar um registro existente", responses = {
         @ApiResponse(responseCode = "200", description = "Quando o registro for deletado"),
         @ApiResponse(responseCode = "404", description = "Quando o registro não for encontrado") })
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteDentista(
             @Parameter(description = "ID do registro a ser deletado", required = true)
             @PathVariable Long id) {

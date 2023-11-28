@@ -43,6 +43,21 @@ public class DentistaService extends ServiceAbstract<Dentista> {
             return repository().findById(id).orElseThrow(() ->  new NotFoundException("Dentista não encontrado"));
     }
 
+    @Override
+    public Dentista create(Dentista entity) {
+        
+        try {
+            return super.create(entity);
+        } catch (DataIntegrityViolationException e) {
+           throw new DataIntegrityViolationException("Registro já cadastrado");
+        } catch (Exception e){
+            throw e;
+        }
+        
+    }
+
+    
+
     
 
     

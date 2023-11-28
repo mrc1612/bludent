@@ -28,8 +28,11 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(authoraze -> authoraze
+                        
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod., "/swagger-ui/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter,   UsernamePasswordAuthenticationFilter.class)
                 .build();

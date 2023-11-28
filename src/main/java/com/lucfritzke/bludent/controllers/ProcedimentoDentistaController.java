@@ -85,7 +85,7 @@ public class ProcedimentoDentistaController {
     }
 
     @Operation(summary = "Atualizar procedimentos realizados por dentistas")
-    @PutMapping("/")
+    @PutMapping("/atualizar")
     public ResponseEntity<ProcedimentoDentista> updateProcedimentoDentista(
             @Validated @RequestBody ProcedimentoDentistaDTO pDTO) {
 
