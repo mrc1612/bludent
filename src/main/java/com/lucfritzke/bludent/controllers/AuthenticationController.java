@@ -17,8 +17,9 @@ import com.lucfritzke.bludent.domain.User.User;
 import com.lucfritzke.bludent.repositories.UserRepository;
 import com.lucfritzke.bludent.security.TokenService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-
+@Tag(name = "Autenticação", description = "Responsavel por validar o acesso dos usuarios")
 @RestController
 @RequestMapping("auth")
 public class AuthenticationController {

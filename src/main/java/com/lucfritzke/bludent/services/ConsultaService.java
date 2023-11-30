@@ -1,7 +1,6 @@
 package com.lucfritzke.bludent.services;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -69,9 +68,9 @@ public class ConsultaService {
         Optional<Consulta> o = consultaRepository.findById(id);
         if (o.isPresent()) {
             consultaRepository.delete(o.get());
-            return ResponseEntity.status(200).body(new ErroDTO(200, "OK", "OK"));
+            return ResponseEntity.status(200).body(new ErroDTO("OK", "OK"));
         } else {
-            return ResponseEntity.status(404).body(new ErroDTO(404, "ERRO", "Id da consulta não localizado"));
+            return ResponseEntity.status(404).body(new ErroDTO("ERRO", "Id da consulta não localizado"));
         }
 
     }

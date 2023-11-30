@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.lucfritzke.bludent.dto.ErroDTO;
+import com.lucfritzke.bludent.exceptions.DeleteException;
 import com.lucfritzke.bludent.exceptions.NotFoundException;
 
 public abstract class ServiceAbstract<T> {
@@ -35,14 +37,13 @@ public abstract class ServiceAbstract<T> {
 
     public T findByIdDelete(Long id) {
 
-        return repository().findById(id).orElseThrow(() ->  new NotFoundException("{ \"status\" : \"ERRO\", \"mensagem\" : \"Entidade não existe\"}"));
+        return repository().findById(id).orElseThrow(() ->  new DeleteException(new ErroDTO("ERRO", "Entidade não encontrada")));
 
     }
 
     public void delete(Long id) {
        repository().delete(
                 repository().findById(id)
-                        .orElseThrow(() -> new NotFoundException("{ \"status\" : \"ERRO\", \"mensagem\" : \"Entidade não existe\"}"))
-        );
+                        .orElseThrow(() -> new DeleteException(new ErroDTO("ERRO", "Entidade não encontrada"))));
     }
 }

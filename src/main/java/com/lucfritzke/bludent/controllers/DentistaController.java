@@ -63,7 +63,7 @@ public class DentistaController {
             @ApiResponse(responseCode = "404", description = "Quando o registro não for encontrado"),
         }   
     )
-    @GetMapping("/{id}")
+    @GetMapping("/buscar/{id}")
     public ResponseEntity<Dentista> getDentista(
             @Parameter(description = "ID do registro a ser obtido", required = true)
             @PathVariable Long id) {
@@ -92,9 +92,13 @@ public class DentistaController {
             @ApiResponse(responseCode = "404", description = "Quando o registro não for encontrado"),
         }   
     )
-    @PutMapping("/{id}")
-    public ResponseEntity<Dentista> atualizarPaciente(@PathVariable Long id, @RequestBody Dentista entity) {
+    @PutMapping("/atualizar/{id}")
+    public ResponseEntity<?> atualizarPaciente(@PathVariable Long id, @RequestBody Dentista entity) {
         Dentista dentista = service.findById(id);
+
+        if(entity.getNome() == null && entity.getRegistro() == 0 && entity.getEmail() == null){
+            return ResponseEntity.status(400).body(new ErroDTO("ERRO", "Dados invalidos"));
+        }
         if(entity.getNome() != null){
              dentista.setNome(entity.getNome());
         }
@@ -124,7 +128,7 @@ public class DentistaController {
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<?> dataIntegrityViolationException(DataIntegrityViolationException de) {
-        ErroDTO e = new ErroDTO(409, "Conflict", de.getMessage());
+        ErroDTO e = new ErroDTO("Conflict", de.getMessage());
         return ResponseEntity.status(409).body(e);
     }
 
@@ -132,7 +136,7 @@ public class DentistaController {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<?> notFoundExpeption(NotFoundException ne){
 
-        return ResponseEntity.status(404).body(ne.getMessage());
+        return ResponseEntity.status(404).body(new ErroDTO("ERRO", "Dentista não encontrado"));
     }
 
 }

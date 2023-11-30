@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -80,7 +78,7 @@ public class ConsultaController {
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<?> dataIntegrityViolationException(DataIntegrityViolationException de) {
-        ErroDTO e = new ErroDTO(409, "Conflict", de.getMessage());
+        ErroDTO e = new ErroDTO("Conflict", de.getMessage());
         return ResponseEntity.status(409).body(e);
     }
 
@@ -99,7 +97,7 @@ public class ConsultaController {
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<?> notFoundExpeption(NotFoundException ne){
-        ErroDTO e = new ErroDTO(404, "Not found", ne.getMessage());
+        ErroDTO e = new ErroDTO("Not found", ne.getMessage());
         return ResponseEntity.status(404).body(e);
     }
 }

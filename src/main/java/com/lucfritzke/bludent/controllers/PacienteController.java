@@ -51,7 +51,7 @@ public class PacienteController {
             @ApiResponse(responseCode = "409", description = "Quando já existir usuário com cpf no sistema")
         }   
     )
-    @PostMapping("/cadastrar")
+    @PostMapping("/inserir")
     public ResponseEntity<Paciente> create(@Valid @RequestBody Paciente entity){
 
         return ResponseEntity.ok().body(service.create(entity));
@@ -65,7 +65,7 @@ public class PacienteController {
             @ApiResponse(responseCode = "404", description = "Quando o registro não for encontrado"),
         }   
     )
-    @GetMapping("/{id}")
+    @GetMapping("/buscar/{id}")
     public ResponseEntity<Paciente> getDentista(
             @Parameter(description = "ID do registro a ser obtido", required = true)
             @PathVariable Long id) {
@@ -77,7 +77,7 @@ public class PacienteController {
     @Operation(summary = "Deletar um registro existente", responses = {
         @ApiResponse(responseCode = "200", description = "Quando o registro for deletado"),
         @ApiResponse(responseCode = "404", description = "Quando o registro não for encontrado")})
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteDentista(
             @Parameter(description = "ID do registro a ser deletado", required = true)
             @PathVariable Long id) {
@@ -94,7 +94,7 @@ public class PacienteController {
             @ApiResponse(responseCode = "404", description = "Quando o registro não for encontrado"),
         }   
     )
-    @PutMapping("/{id}")
+    @PutMapping("/atualizar/{id}")
     public ResponseEntity<Paciente> atualizarPaciente(@PathVariable Long id, @RequestBody Paciente entity) {
         Paciente paciente = service.findById(id);
         paciente.setNome(entity.getNome());
@@ -122,14 +122,14 @@ public class PacienteController {
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<?> dataIntegrityViolationException(DataIntegrityViolationException de){
-        ErroDTO e = new ErroDTO(409, "CONFLICT", de.getMessage());
+        ErroDTO e = new ErroDTO("CONFLICT", de.getMessage());
         return ResponseEntity.status(409).body(e);
     }
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<?> notFoundExpeption(NotFoundException ne){
-        ErroDTO e = new ErroDTO(404, "NOT_FOUND", ne.getMessage());
+        ErroDTO e = new ErroDTO("NOT_FOUND", ne.getMessage());
         return ResponseEntity.status(404).body(e);
     }
 }

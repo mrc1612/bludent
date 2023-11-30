@@ -2,6 +2,7 @@ package com.lucfritzke.bludent.controllers;
 
 import com.lucfritzke.bludent.domain.Procedimento;
 import com.lucfritzke.bludent.dto.ErroDTO;
+import com.lucfritzke.bludent.dto.StatusOkDTO;
 import com.lucfritzke.bludent.services.ProcedimentoService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import com.lucfritzke.bludent.exceptions.DeleteException;
 import com.lucfritzke.bludent.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -42,7 +44,7 @@ public class ProcedimentoController {
             @ApiResponse(responseCode = "400", description = "Quando o registro for nulo ou houver formatação incorreta de dados"),
         }   
     )
-    @PostMapping("/cadastrar")
+    @PostMapping("/inserir")
     public ResponseEntity<Procedimento> createProcedimento(@Validated @RequestBody Procedimento procedimento) {
         return ResponseEntity.ok().body(service.create(procedimento));
     }
@@ -55,7 +57,7 @@ public class ProcedimentoController {
             @ApiResponse(responseCode = "404", description = "Quando o registro não for encontrado"),
         }   
     )
-    @GetMapping("/{id}")
+    @GetMapping("/buscar/{id}")
     public ResponseEntity<Procedimento> getProcedimentoById(@PathVariable Long id) {
         Procedimento p = service.findById(id);
         return ResponseEntity.ok().body(p);
@@ -67,8 +69,8 @@ public class ProcedimentoController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteProcedimento(@PathVariable Long id) {
         service.delete(id);
-        String json = "{ \"status\" : \"OK\", \"mensagem\" : \"OK\"}";
-        return ResponseEntity.ok().body(json);
+        StatusOkDTO s = new StatusOkDTO("OK", "Procedimento deletado com sucesso");
+        return ResponseEntity.ok().body(s);
     }
 
     @Operation(
@@ -78,7 +80,7 @@ public class ProcedimentoController {
             @ApiResponse(responseCode = "404", description = "Quando o registro não for encontrado"),
         }   
     )
-    @PutMapping("/{id}")
+    @PutMapping("/atualizar/{id}")
     public ResponseEntity<Procedimento> updateProcedimento(@PathVariable Long id, @RequestBody Procedimento procedimento) {
         Procedimento p = service.findById(id);
         p.setDescricao(procedimento.getDescricao());
@@ -101,13 +103,20 @@ public class ProcedimentoController {
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<?> dataIntegrityViolationException(DataIntegrityViolationException de){
-        return ResponseEntity.status(409).body(de.getMessage());
+        return ResponseEntity.status(409).body(new ErroDTO("Conflict", "Procedimento esta sendo referenciado por outra entidade"));
     }
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<?> notFoundExpeption(NotFoundException ne){
-        ErroDTO e = new ErroDTO(404, "Not found", ne.getMessage());
+        ErroDTO e = new ErroDTO("Not found", "Procedimento não encontrado");
+        return ResponseEntity.status(404).body(e);
+    }
+
+    @ExceptionHandler(DeleteException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<?> deleteException(DeleteException de){
+        ErroDTO e = new ErroDTO("ERRO", "Procedimento não encontrado");
         return ResponseEntity.status(404).body(e);
     }
 }

@@ -119,7 +119,7 @@ public class ProcedimentoDentistaController {
     @ResponseStatus(HttpStatus.CONFLICT)
 
     public ResponseEntity<?> dataIntegrityViolationException(DataIntegrityViolationException de) {
-        ErroDTO e = new ErroDTO(409, "Conflict", de.getMessage());
+        ErroDTO e = new ErroDTO("Conflict", de.getMessage());
         return ResponseEntity.status(409).body(e);
     }
 
@@ -129,7 +129,7 @@ public class ProcedimentoDentistaController {
         if(ne.getMessage().contains("ERRO")){
             return ResponseEntity.status(404).body(ne.getMessage());
         }
-        ErroDTO e = new ErroDTO(404, "Not Found", ne.getMessage());
+        ErroDTO e = new ErroDTO("Not Found", ne.getMessage());
         return ResponseEntity.status(404).body(e);
     }
 
