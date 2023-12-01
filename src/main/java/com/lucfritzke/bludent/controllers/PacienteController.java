@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import com.lucfritzke.bludent.domain.Paciente;
 import com.lucfritzke.bludent.dto.ErroDTO;
+import com.lucfritzke.bludent.dto.StatusOkDTO;
+import com.lucfritzke.bludent.exceptions.DeleteException;
 import com.lucfritzke.bludent.exceptions.NotFoundException;
 import com.lucfritzke.bludent.services.PacienteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,60 +42,45 @@ public class PacienteController {
 
     @Autowired
     private PacienteService service;
-    
-    @Operation(
-        summary = "Inserir novo paciente",
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Quando o registro for criado",
-            content = @Content(mediaType = "application/json", 
-            schema = @Schema(example = "{\"nome\":\"Lucas Fritzke\",\"dataNascimento\":\"2000-12-25\",\"cpf\":\"18219822821\",\"telefone\":\"47952635878\"}"))),
+
+    @Operation(summary = "Inserir novo paciente", responses = {
+            @ApiResponse(responseCode = "200", description = "Quando o registro for criado", content = @Content(mediaType = "application/json", schema = @Schema(example = "{\"nome\":\"Lucas Fritzke\",\"dataNascimento\":\"2000-12-25\",\"cpf\":\"18219822821\",\"telefone\":\"47952635878\"}"))),
             @ApiResponse(responseCode = "400", description = "Quando o registro for nulo ou houver formatação incorreta de dados"),
             @ApiResponse(responseCode = "409", description = "Quando já existir usuário com cpf no sistema")
-        }   
-    )
+    })
     @PostMapping("/inserir")
-    public ResponseEntity<Paciente> create(@Valid @RequestBody Paciente entity){
+    public ResponseEntity<Paciente> create(@Valid @RequestBody Paciente entity) {
 
         return ResponseEntity.ok().body(service.create(entity));
-        
+
     }
 
-    @Operation(
-        summary = "Obter dados por ID",
-        responses = {
+    @Operation(summary = "Obter dados por ID", responses = {
             @ApiResponse(responseCode = "200", description = "Quando o registro for encontrado"),
             @ApiResponse(responseCode = "404", description = "Quando o registro não for encontrado"),
-        }   
-    )
+    })
     @GetMapping("/buscar/{id}")
     public ResponseEntity<Paciente> getDentista(
-            @Parameter(description = "ID do registro a ser obtido", required = true)
-            @PathVariable Long id) {
+            @Parameter(description = "ID do registro a ser obtido", required = true) @PathVariable Long id) {
         Paciente p = service.findById(id);
         return ResponseEntity.ok().body(p);
     }
 
-
     @Operation(summary = "Deletar um registro existente", responses = {
-        @ApiResponse(responseCode = "200", description = "Quando o registro for deletado"),
-        @ApiResponse(responseCode = "404", description = "Quando o registro não for encontrado")})
+            @ApiResponse(responseCode = "200", description = "Quando o registro for deletado"),
+            @ApiResponse(responseCode = "404", description = "Quando o registro não for encontrado") })
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteDentista(
-            @Parameter(description = "ID do registro a ser deletado", required = true)
-            @PathVariable Long id) {
-        service.findByIdDelete(id);
+    public ResponseEntity<?> deletePaciente(
+            @Parameter(description = "ID do registro a ser deletado", required = true) @PathVariable Long id) {
         service.delete(id);
-        String json = "{ \"status\" : \"OK\", \"mensagem\" : \"OK\"}";
-        return ResponseEntity.ok().body(json);
+        StatusOkDTO s = new StatusOkDTO("OK", "Procedimento deletado com sucesso");
+        return ResponseEntity.ok().body(s);
     }
 
-    @Operation(
-        summary = "Alterar dados existentes por ID",
-        responses = {
+    @Operation(summary = "Alterar dados existentes por ID", responses = {
             @ApiResponse(responseCode = "200", description = "Quando o registro for encontrado"),
             @ApiResponse(responseCode = "404", description = "Quando o registro não for encontrado"),
-        }   
-    )
+    })
     @PutMapping("/atualizar/{id}")
     public ResponseEntity<Paciente> atualizarPaciente(@PathVariable Long id, @RequestBody Paciente entity) {
         Paciente paciente = service.findById(id);
@@ -105,7 +92,6 @@ public class PacienteController {
 
         return ResponseEntity.ok().body(entity);
     }
-
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -121,15 +107,22 @@ public class PacienteController {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity<?> dataIntegrityViolationException(DataIntegrityViolationException de){
-        ErroDTO e = new ErroDTO("CONFLICT", de.getMessage());
+    public ResponseEntity<?> dataIntegrityViolationException(DataIntegrityViolationException de) {
+        ErroDTO e = new ErroDTO("ERRO", "Paciente esta sendo referenciado por outra entidade    ");
         return ResponseEntity.status(409).body(e);
     }
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<?> notFoundExpeption(NotFoundException ne){
+    public ResponseEntity<?> notFoundExpeption(NotFoundException ne) {
         ErroDTO e = new ErroDTO("NOT_FOUND", ne.getMessage());
+        return ResponseEntity.status(404).body(e);
+    }
+
+    @ExceptionHandler(DeleteException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<?> deleteException(DeleteException de){
+        ErroDTO e = new ErroDTO("ERRO", "Paciente não encontrado");
         return ResponseEntity.status(404).body(e);
     }
 }

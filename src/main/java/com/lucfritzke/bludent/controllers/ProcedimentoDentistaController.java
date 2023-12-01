@@ -27,6 +27,7 @@ import com.lucfritzke.bludent.domain.ProcedimentoDentistaId;
 import com.lucfritzke.bludent.dto.ErroDTO;
 import com.lucfritzke.bludent.dto.ProcedimentoDentistaDTO;
 import com.lucfritzke.bludent.dto.ProcedimentoPorDentistaDTO;
+import com.lucfritzke.bludent.dto.StatusOkDTO;
 import com.lucfritzke.bludent.exceptions.NotFoundException;
 import com.lucfritzke.bludent.repositories.ProcedimentoDentistaRepository;
 import com.lucfritzke.bludent.services.DentistaService;
@@ -111,15 +112,14 @@ public class ProcedimentoDentistaController {
         @RequestParam("p") Long procedimentoId) {
         ProcedimentoDentistaId pID = new ProcedimentoDentistaId(dentistaId, procedimentoId);
         service.delete(pID);
-        String json = "{ \"status\" : \"OK\", \"mensagem\" : \"OK\"}";
-        return ResponseEntity.ok().body(json);
+        StatusOkDTO s = new StatusOkDTO("OK", "Procedimento deletado com sucesso");
+        return ResponseEntity.ok().body(s);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-
     public ResponseEntity<?> dataIntegrityViolationException(DataIntegrityViolationException de) {
-        ErroDTO e = new ErroDTO("Conflict", de.getMessage());
+        ErroDTO e = new ErroDTO("ERRO", "Entidade esta sendo referenciado por outra entidade");
         return ResponseEntity.status(409).body(e);
     }
 

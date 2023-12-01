@@ -128,7 +128,7 @@ public class DentistaController {
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<?> dataIntegrityViolationException(DataIntegrityViolationException de) {
-        ErroDTO e = new ErroDTO("Conflict", de.getMessage());
+        ErroDTO e = new ErroDTO("ERRO", de.getMessage());
         return ResponseEntity.status(409).body(e);
     }
 

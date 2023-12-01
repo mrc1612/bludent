@@ -103,13 +103,13 @@ public class ProcedimentoController {
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<?> dataIntegrityViolationException(DataIntegrityViolationException de){
-        return ResponseEntity.status(409).body(new ErroDTO("Conflict", "Procedimento esta sendo referenciado por outra entidade"));
+        return ResponseEntity.status(409).body(new ErroDTO("ERRO", "Procedimento esta sendo referenciado por outra entidade"));
     }
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<?> notFoundExpeption(NotFoundException ne){
-        ErroDTO e = new ErroDTO("Not found", "Procedimento não encontrado");
+        ErroDTO e = new ErroDTO("ERRO", "Procedimento não encontrado");
         return ResponseEntity.status(404).body(e);
     }
 
